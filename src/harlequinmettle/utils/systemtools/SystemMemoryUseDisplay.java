@@ -5,9 +5,9 @@ import java.awt.Graphics;
 
 import javax.swing.JFrame;
 
-public class SystemMemoryUsage extends JFrame implements Runnable{
+public class SystemMemoryUseDisplay extends JFrame implements Runnable{
  int inc = 0;
-	public SystemMemoryUsage(){
+	public SystemMemoryUseDisplay(){
 		this.setSize(300,800);
 		this.setVisible(true);
 		new Thread(this).start();

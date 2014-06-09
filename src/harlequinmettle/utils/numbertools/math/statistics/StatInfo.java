@@ -30,22 +30,22 @@ import javax.swing.JFrame;
 
 public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		MouseMotionListener {
-	public int ID;
+	// public int ID;
 	public int repaintCounter = 0;
 	public static final int SIDE_BUFFER = 50;
 	public static final int drag_proximity = 20;
-	float sum, sumOfSquares, mean, median;
-	public float min;
-	public float max;
-	float n, range;
+	double sum, sumOfSquares, mean, median;
+	public double min;
+	public double max;
+	double n = 1, range;
 
 	int[] histogram;
 
-	float emin, emax, percentile = 2;
+	double emin, emax, percentile = 2;
 
-	float interval;
+	double interval;
 
-	public float standardDeviation;
+	public double standardDeviation;
 
 	float graphicsScale = 1.0f;
 	float frameH, frameW;
@@ -79,10 +79,10 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 	float barwidth = 10;
 	float dataQuality = 0;
 
-	Rectangle2D.Float[] histoBars = new Rectangle2D.Float[nbars];
+	Rectangle2D.Double[] histoBars = new Rectangle2D.Double[nbars];
 
-	ArrayList<Rectangle2D.Float> overBars = new ArrayList<Rectangle2D.Float>();
-	ArrayList<Rectangle2D.Float> underBars = new ArrayList<Rectangle2D.Float>();
+	ArrayList<Rectangle2D.Double> overBars = new ArrayList<Rectangle2D.Double>();
+	ArrayList<Rectangle2D.Double> underBars = new ArrayList<Rectangle2D.Double>();
 
 	Rectangle2D.Float shadedArea1;
 	Rectangle2D.Float shadedArea2;
@@ -147,21 +147,6 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		;
 	}
 
-	public StatInfo(ArrayList<Float> data, boolean show) {
-		if (show) {
-			reVisualize();
-		}
-		frameW = this.getWidth();
-		frameH = this.getHeight();
-		barwidth = (frameW - 2 * SIDE_BUFFER - BAR_BUFFER * nbars) / nbars;
-		doStatsOnList(data);
-
-		calculateHistogramEffective(data);
-		setUpBars();
-		if (show)
-			setVisible(true);
-	}
-
 	public StatInfo(ArrayList<Float> data) {
 		reVisualize();
 		doStatsOnList(data);
@@ -171,147 +156,6 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		setVisible(true);
 		this.repaint();
 	}
-
-	public void setShowLines(boolean showLines) {
-		this.showLines = showLines;
-	}
-
-	public StatInfo(ArrayList<Float> stats, int id) {
-		reVisualize();
-		ID = id;
-		// ALTERNATEIVELY GET CURRENT LIMITS FROM SETTINGS
-		xLim = frameW - SIDE_BUFFER;
-		nLim = SIDE_BUFFER;
-		doStatsOnList(stats);
-		calculateHistogramEffective(stats);
-		setUpBars();
-		varsSet = true;
-		//FIXME
-//		this.setTitle(DBLabels.labels[id]);
-//		title = DBLabels.labels[id];
-		setVisible(true);
-		this.repaint();
-	}
-
-	public StatInfo(ArrayList<Float> stats, int id, int noShow) {
-		reVisualize();
-		ID = id;
-		xLim = frameW - SIDE_BUFFER;
-		nLim = SIDE_BUFFER;
-		doStatsOnList(stats);
-		calculateHistogramEffective(stats);
-		setUpBars();
-		varsSet = true;
-		//FIXME
-//		this.setTitle(DBLabels.labels[id]);
-//		title = DBLabels.labels[id];
-		setTitle(title);
-		if (noShow == DONT_SHOW)
-			return;
-		setVisible(true);
-		this.repaint();
-	}
-
-	public StatInfo(ArrayList<Float> stats, int id, int noShow, float emn,
-			float emx, boolean left) {
-		reVisualize();
-		ID = id;
-		xLim = frameW - SIDE_BUFFER;
-		nLim = SIDE_BUFFER;
-		doStatsOnList(stats);
-		calculateHistogramEffective(stats, emn, emx);
-		setUpBars(left);
-		varsSet = true;
-		//FIXME
-//		this.setTitle(DBLabels.labels[id]);
-//		title = DBLabels.labels[id];
-		setTitle(title);
-		if (noShow == DONT_SHOW)
-			return;
-		setVisible(true);
-		this.repaint();
-	}
-
-	public StatInfo(ArrayList<Float> stats, int id, int noShow, float emn,
-			float emx) {
-		reVisualize();
-		ID = id;
-		xLim = frameW - SIDE_BUFFER;
-		nLim = SIDE_BUFFER;
-		doStatsOnList(stats);
-		calculateHistogramEffective(stats, emn, emx);
-		setUpBars();
-		varsSet = true;
-		//FIXME
-//		this.setTitle(DBLabels.labels[id]);
-//		title = DBLabels.labels[id];
-		setTitle(title);
-		if (noShow == DONT_SHOW)
-			return;
-		setVisible(true);
-		this.repaint();
-	}
-
-//	public void showIt() {
-//		subsetStats = generateBundleStatistics(ID, emin, emax);
-//		setMarketComparisonStatistics(this, ID, emin, emax);
-//
-//		setUpComparisonBars();
-//		setVisible(true);
-//		this.repaint();
-//	}
-
-//	public static void setMarketComparisonStatistics(StatInfo setTo, int iD,
-//			float emin, float emax) {
-//
-//		ArrayList<Float> over = new ArrayList<Float>();
-//		ArrayList<Float> under = new ArrayList<Float>();
-//
-//		for (Entry<Float, float[][]> ent : Database.DB_ARRAY.entrySet()) {
-//			// change in market forward 1wk
-//			if (!Database.WEEKLY_MARKETCHANGE.containsKey(ent.getKey()))
-//				continue;
-//			float marketChange = Database.WEEKLY_MARKETCHANGE.get(ent.getKey());
-//
-//			System.out.println("MARKET WAS " + marketChange);
-//			float[][] dats = ent.getValue();
-//			float[] individualsChanges = Database.UNFORESEEN.get(ent.getKey());
-//			if (individualsChanges != null)
-//				for (int i = 0; i < dats.length; i++) {
-//					if (individualsChanges[i] != individualsChanges[i])
-//						continue;
-//					if (individualsChanges[i] > marketChange)
-//						over.add(dats[i][iD]);
-//					else if (individualsChanges[i] < marketChange)
-//						under.add(dats[i][iD]);
-//				}
-//		}
-//		System.out.println("sizes:  -------->" + over.size() + "   "
-//				+ under.size());
-//		// overs - left = false -> right
-//		setTo.beatMarket = new StatInfo(over, iD, StatInfo.DONT_SHOW, emin,
-//				emax, false);
-//
-//		// unders- left = true
-//		setTo.marketBeat = new StatInfo(under, iD, StatInfo.DONT_SHOW, emin,
-//				emax, true);
-//	}
-
-//	public static StatInfo generateBundleStatistics(int id, float emn, float emx) {
-//
-//		ArrayList<Float> stats = new ArrayList<Float>();
-//		if (Database.BUNDLES.size() < Database.DB_ARRAY.size())
-//			return new StatInfo(stats, id, StatInfo.DONT_SHOW);
-//		// TreeMap<Float, ArrayList<Integer>> BUNDLES
-//
-//		for (Entry<Float, float[][]> ent : Database.DB_ARRAY.entrySet()) {
-//			float[][] dats = ent.getValue();
-//			for (int bun : Database.BUNDLES.get(ent.getKey())) {
-//				stats.add(dats[bun][id]);
-//			}
-//		}
-//		return new StatInfo(stats, id, StatInfo.DONT_SHOW, emn, emx);
-//	}
 
 	public void reVisualize() {
 
@@ -358,8 +202,11 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 	public void doStatsOnList(ArrayList<Float> data) {
 		ArrayList<Float> medianFinder = new ArrayList<Float>();
 		for (float dataPoint : data) {
-
+			// NaN
 			if (dataPoint != dataPoint)
+				continue;
+			// pos or neg infinity
+			if (Float.isInfinite(dataPoint))
 				continue;
 
 			n++;
@@ -371,6 +218,9 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		if (medianFinder.size() < 1)
 			return;
 		Collections.sort(medianFinder);
+		if(medianFinder.size()==1)
+			median = sum;
+		else
 		median = ((medianFinder.get((int) (n / 2)) + medianFinder
 				.get((int) ((n - 1) / 2))) / 2);
 		min = medianFinder.get(0);
@@ -382,21 +232,25 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		range = max - min;
 
 		dataQuality = (float) n / data.size();
-		float lowThird = (mean - percentile * standardDeviation);
+		double lowThird = (mean - percentile * standardDeviation);
 		emin = lowThird < min ? min : lowThird;
-		float highThird = (mean + percentile * standardDeviation);
+		double highThird = (mean + percentile * standardDeviation);
 		emax = highThird > max ? max : highThird;
 		// round our numbers to 4 sig fig
-		BigDecimal bd = new BigDecimal(emin);
+		BigDecimal bd  = new BigDecimal(0);
+		if(!Double.isInfinite(emin)){
+		  bd = new BigDecimal(emin);
 		bd = bd.round(new MathContext(4));
 		emin = bd.floatValue();
+		}
+		if(!Double.isInfinite(emax)){
 		bd = new BigDecimal(emax);
 		bd = bd.round(new MathContext(4));
 		emax = bd.floatValue();
-
+		}
 	}
 
-	public int locationInHistogram(float f) {
+	public int locationInHistogram(double f) {
 		return (int) ((f - (emin)) / (interval));
 
 	}
@@ -473,7 +327,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 
 	public void setUpBars() {
 
-		histoBars = new Rectangle2D.Float[nbars];
+		histoBars = new Rectangle2D.Double[nbars];
 		if (usingMax)
 			graphicsScale = (frameH - 90) / maxBar;
 		else
@@ -484,7 +338,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 			int left = SIDE_BUFFER + BAR_BUFFER * i + ((int) barwidth) * i;
 			int width = (int) (barwidth);
 			int height = (int) (graphicsScale * histogram[i]);
-			histoBars[i] = new Rectangle2D.Float(left, top, width, height);
+			histoBars[i] = new Rectangle2D.Double(left, top, width, height);
 
 		}
 
@@ -492,7 +346,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 
 	private void setUpBars(boolean leftornot) {
 
-		histoBars = new Rectangle2D.Float[nbars];
+		histoBars = new Rectangle2D.Double[nbars];
 		if (usingMax)
 			graphicsScale = (frameH - 90) / maxBar;
 		else
@@ -511,7 +365,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 			int width = (int) (barwidth / 2);
 
 			int height = (int) (graphicsScale * histogram[i]);
-			histoBars[i] = new Rectangle2D.Float(left, top, width, height);
+			histoBars[i] = new Rectangle2D.Double(left, top, width, height);
 
 		}
 	}
@@ -530,7 +384,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 			int left = SIDE_BUFFER + BAR_BUFFER * i + ((int) barwidth) * i;
 			int width = (int) (barwidth);
 			int height = (int) (toScale * absDiff + 2);
-			Rectangle2D.Float diff = new Rectangle2D.Float(left, top, width,
+			Rectangle2D.Double diff = new Rectangle2D.Double(left, top, width,
 					height);
 
 			if (over > under) {
@@ -709,24 +563,24 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 			g.draw(line);
 		// draw histogram
 		g.setColor(bc);
-		for (Rectangle2D.Float f : histoBars) {
+		for (Rectangle2D.Double f : histoBars) {
 			g.fill(f);
 
 		}
 		g.setColor(redT);
-		for (Rectangle2D.Float f : underBars) {
+		for (Rectangle2D.Double f : underBars) {
 			g.fill(f);
 
 		}
 		g.setColor(greenT);
-		for (Rectangle2D.Float f : overBars) {
+		for (Rectangle2D.Double f : overBars) {
 
 			g.fill(f);
 
 		}
 		g.setColor(bcSub);
 		if (subsetStats != null && subsetStats.histoBars != null)
-			for (Rectangle2D.Float f : subsetStats.histoBars) {
+			for (Rectangle2D.Double f : subsetStats.histoBars) {
 				if (f != null)
 					g.fill(f);
 
@@ -767,7 +621,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 
 		// add numbers to histogram
 		addNumbersToHistogram(g);
-		if(showLines){
+		if (showLines) {
 			drawRelativeLines(g);
 		}
 
@@ -775,29 +629,30 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 
 	private void drawRelativeLines(Graphics2D g) {
 
-//		float xZero = getPixel(0);
-//		float xMedian = getPixel(median);
-//		float xMean = getPixel(mean);
-//		Line2D.Float zero = new Line2D.Float(xZero,0,xZero,frameH);
-//		Line2D.Float _median = new Line2D.Float(xMedian,0,xMedian,frameH);
-//		Line2D.Float _mean = new Line2D.Float(xMean,0,xMean,frameH);
-		if(locationInHistogram(0)<0)return;
-		Rectangle2D.Float zero = histoBars[locationInHistogram(0)];
-		Rectangle2D.Float _median = histoBars[locationInHistogram(median)];
-		Rectangle2D.Float _mean =  histoBars[locationInHistogram(mean)];
-		
+		// float xZero = getPixel(0);
+		// float xMedian = getPixel(median);
+		// float xMean = getPixel(mean);
+		// Line2D.Float zero = new Line2D.Float(xZero,0,xZero,frameH);
+		// Line2D.Float _median = new Line2D.Float(xMedian,0,xMedian,frameH);
+		// Line2D.Float _mean = new Line2D.Float(xMean,0,xMean,frameH);
+		if (locationInHistogram(0) < 0)
+			return;
+		Rectangle2D.Double zero = histoBars[locationInHistogram(0)];
+		Rectangle2D.Double _median = histoBars[locationInHistogram(median)];
+		Rectangle2D.Double _mean = histoBars[locationInHistogram(mean)];
+
 		g.setColor(Color.white);
 		g.draw(zero);
 		g.setColor(Color.orange);
-		g.drawString("median:  "+median, 100, 200);
+		g.drawString("median:  " + median, 100, 200);
 		g.draw(_median);
 		g.setColor(Color.red);
-		g.drawString("mean:  "+mean, 100, 250);
+		g.drawString("mean:  " + mean, 100, 250);
 		g.draw(_mean);
 	}
 
-	private float getPixel(float pt) { 
-		return  ((pt-emin)*(frameW-2*SIDE_BUFFER)/emax);
+	private double getPixel(float pt) {
+		return ((pt - emin) * (frameW - 2 * SIDE_BUFFER) / emax);
 	}
 
 	private void addNumbersToHistogram(Graphics2D g) {
@@ -950,13 +805,13 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		// CALCULATE LIMITS AND APPLY TO DATABASE
 	}
 
-	private float determineLimit(float x) {
-		float limit = 0;
-		float ex = x - SIDE_BUFFER;
+	private double determineLimit(float x) {
+		double limit = 0;
+		double ex = x - SIDE_BUFFER;
 
-		float range = emax - emin;
-		float pixelRange = frameW - 2 * SIDE_BUFFER;
-		float f = range / pixelRange;
+		double range = emax - emin;
+		double pixelRange = frameW - 2 * SIDE_BUFFER;
+		double f = range / pixelRange;
 
 		limit = emin + ex * f;
 		BigDecimal bd = new BigDecimal(limit);
