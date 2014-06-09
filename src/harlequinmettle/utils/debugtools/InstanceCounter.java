@@ -31,11 +31,15 @@ public void printlnSize(){
 
 	}
 
-	public void printlnCount() {
+	public void printlnCounts(float skipPercent) {
+		int counter = 0;
 		if (!FLOAT_COUNTER.isEmpty()) {
 			for (Entry<Float, Integer> ent : FLOAT_COUNTER.entrySet()) {
+			if(counter>20 && counter<FLOAT_COUNTER.size()-20 && skipPercent<Math.random())
+				continue;
 				System.out.println(ent.getKey() + "   occurs  "
 						+ ent.getValue());
+			counter++;
 			}
 		}
 		if (!STRING_COUNTER.isEmpty()) {
