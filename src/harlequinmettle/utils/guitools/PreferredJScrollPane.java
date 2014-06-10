@@ -13,7 +13,9 @@ public class PreferredJScrollPane extends JScrollPane {
 		this.setPreferredSize(new Dimension(600, 300));
 		this.getVerticalScrollBar().setUnitIncrement(32);
 	}
-
+public int getHorizontalOffset(){
+	return  getHorizontalScrollBar().getValue();
+}
 	public PreferredJScrollPane(JComponent jComp) {
 
 		/////////////////
