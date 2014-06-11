@@ -9,7 +9,7 @@ import javax.swing.JTextField;
 
 public class JSearchPanel extends HorizontalJPanel {
 
-	final JLabel wordSearch = doJLabel("words to search for");
+	final JLabel wordSearch = doJLabel("enter ticker");
 	final JTextField wordsForSearch = doJTextField();
 
 	final JButtonWithEnterKeyAction submitSearchButton = new JButtonWithEnterKeyAction(
