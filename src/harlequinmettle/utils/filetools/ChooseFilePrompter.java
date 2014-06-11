@@ -6,6 +6,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 public class ChooseFilePrompter {
+	
 	public static String directoryPathChooser( ) {
 		final JFileChooser fc = new JFileChooser( );
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -17,6 +18,7 @@ public class ChooseFilePrompter {
 		}
 		return null;
 	}
+	
 	public static String filePathChooser() {
 		final JFileChooser fc = new JFileChooser();
 		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
