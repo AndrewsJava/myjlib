@@ -1,5 +1,7 @@
 package harlequinmettle.utils.filetools;
 
+import harlequinmettle.utils.guitools.DisplayJFrame;
+
 import java.io.File;
 
 public class ChooseFilePrompterPathSaved {
@@ -12,13 +14,14 @@ public class ChooseFilePrompterPathSaved {
 		}
 		else{
 
+			new DisplayJFrame(key);
 			String savedPath = ChooseFilePrompter.filePathChooser();
 			savedsettings.settings.put(key, savedPath);
 			SerializationTool.serialize(savedsettings, pathToObject);
 			return savedPath;
 		}
 	}
-	public ChooseFilePrompterPathSaved(String pathToObject) {
+	public ChooseFilePrompterPathSaved(String pathToObject ) {
 		this.pathToObject = pathToObject;
 		File objectFile = new File(pathToObject);
 		if (objectFile.exists()) {
