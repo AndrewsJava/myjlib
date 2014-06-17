@@ -17,7 +17,7 @@ public class CommonColors {
 
 	public static  final Color COLOR_HISTOGRAM_BAR_THIS = new Color(200, 200, 200, 150);
 	public static  final Color COLOR_HISTOGRAM_BAR = new Color(100, 100, 250, 150);
-	public static  final Color COLOR_HISTOGRAM_BAR_VOL = new Color(55, 95, 230, 100);
+	public static  final Color COLOR_HISTOGRAM_BAR_VOL = new Color(240,200,40);
 	public static final Color DARK_ORANGE = new Color(165, 67, 0);
 	public static final Color REGION_HIGHLIGHT =new Color(180,180,180,100);
 

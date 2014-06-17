@@ -29,7 +29,7 @@ public int getHorizontalOffset(){
 	            {
 	                if (evt.getWheelRotation() == 1)//mouse wheel was rotated down/ towards the user
 	                {
-	                    int iScrollAmount = 22;//evt.getScrollAmount();
+	                    int iScrollAmount = 12;//evt.getScrollAmount();
 	                    int iNewValue = horizontalScrollBar.getValue() + horizontalScrollBar.getBlockIncrement() * iScrollAmount;
 	                    if (iNewValue <= horizontalScrollBar.getMaximum())
 	                    {
@@ -38,7 +38,7 @@ public int getHorizontalOffset(){
 	                }
 	                else if (evt.getWheelRotation() == -1)//mouse wheel was rotated up/away from the user
 	                {
-	                    int iScrollAmount = 22;//evt.getScrollAmount();
+	                    int iScrollAmount = 12;//evt.getScrollAmount();
 	                    int iNewValue = horizontalScrollBar.getValue() - horizontalScrollBar.getBlockIncrement() * iScrollAmount;
 	                    if (iNewValue >= 0)
 	                    {
