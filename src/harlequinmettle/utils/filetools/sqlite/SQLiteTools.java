@@ -26,35 +26,36 @@ public class SQLiteTools {
 		try {
 			stat = conn.createStatement();
 			stat.executeUpdate("drop table if exists " + tableName + ";");
-			String tableDef = "(";
+			String sqlStatement = "(";
 			for (int i = 0; i < tableColumns.length; i++) {
-				tableDef += tableColumns[i] + " " + tableColumnTypes[i] + ", ";
+				sqlStatement += "tr_"+tableColumns[i].replaceAll("[^A-Za-z0-9]", "_") + " " + tableColumnTypes[i] + ", ";
 			}
-			tableDef = tableDef.substring(0, tableDef.length() - 2);
-
-			stat.executeUpdate("create table " + tableName + " " + tableDef
-					+ ");");
+			sqlStatement = sqlStatement.substring(0, sqlStatement.length() - 2);
+			sqlStatement = "create table " + tableName + " " + sqlStatement
+			+ ");";
+			System.out.println(sqlStatement);
+			stat.executeUpdate(sqlStatement);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return stat;
 	}
 
-	public static Statement reinitializeTable(Connection conn,
-			String tableName, String[] tableColumns) {
-		Statement stat = null;
-		try {
-			stat = conn.createStatement();
-			stat.executeUpdate("drop table if exists " + tableName + ";");
-			String tableDef = Arrays.toString(tableColumns).replace("[", "(")
-					.replace("]", ")").replaceAll(",", ", real");
-			stat.executeUpdate("create table " + tableName + " " + tableDef
-					+ ";");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return stat;
-	}
+//	public static Statement reinitializeTable(Connection conn,
+//			String tableName, String[] tableColumns) {
+//		Statement stat = null;
+//		try {
+//			stat = conn.createStatement();
+//			stat.executeUpdate("drop table if exists " + tableName + ";");
+//			String tableDef = Arrays.toString(tableColumns).replace("[", "(")
+//					.replace("]", ")").replaceAll(",", ", real");
+//			stat.executeUpdate("create table " + tableName + " " + tableDef
+//					+ ";");
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		return stat;
+//	}
 
 	public static void enterRecord(PreparedStatement prep, String[] tableEntries) {
 
