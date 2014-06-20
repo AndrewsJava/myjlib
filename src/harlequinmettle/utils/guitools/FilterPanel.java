@@ -22,10 +22,13 @@ public class FilterPanel extends JPanel {
 	}
 
 	public FilterPanel(ArrayList<String> chooseFrom) {
-		init(chooseFrom.toArray(new String[chooseFrom.size()]));
-
+		init(chooseFrom.toArray(new String[chooseFrom.size()])); 
 	}
-
+public String getFilterName(){
+	return choices.getSelectedItem().toString();
+	//return choices.getItemAt(choices.getSelectedIndex());
+					
+}
 	private void init(String[] chooseFrom) {
 		choices = new JComboBox<String>(chooseFrom);
 		// horizontal layout

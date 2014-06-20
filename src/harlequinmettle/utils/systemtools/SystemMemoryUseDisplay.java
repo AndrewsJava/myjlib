@@ -9,10 +9,14 @@ import javax.swing.JFrame;
 
 public class SystemMemoryUseDisplay extends JFrame implements Runnable {
 	int inc = 0;
+	String title = "Memory Use: ";
+	int mem = 0;
+	int slowdown = 0;
 
 	public SystemMemoryUseDisplay() {
 		this.setSize(300, 800);
 		this.setVisible(true);
+		this.setTitle(title);
 		new Thread(this).start();
 	}
 
@@ -26,7 +30,7 @@ public class SystemMemoryUseDisplay extends JFrame implements Runnable {
 		int max = (int) (maxMem * scale);
 		int use = (int) (useMem * scale);
 		int fre = (int) (freMem * scale);
-
+		mem = (int) (useMem / 1000000);
 		g.setColor(Color.black);
 		g.fillRect(0, 0, this.getWidth(), this.getHeight());
 
@@ -50,10 +54,12 @@ public class SystemMemoryUseDisplay extends JFrame implements Runnable {
 	public void run() {
 		while (true) {
 			this.repaint();
+			this.setTitle(title + mem);
 			try {
-				Thread.sleep(200);
+				if (slowdown < 3000)
+					slowdown += 10;
+				Thread.sleep(100 + slowdown);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
