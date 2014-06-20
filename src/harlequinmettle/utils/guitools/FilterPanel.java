@@ -1,6 +1,7 @@
 package harlequinmettle.utils.guitools;
 
 import java.awt.GridLayout;
+import java.util.ArrayList;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -11,12 +12,22 @@ public class FilterPanel extends JPanel {
 	JCheckBox include = new JCheckBox("apply filter");
 	String[] options = { "between", "less than", "greater than" };
 	JComboBox<String> op = new JComboBox<String>(options);
-	JComboBox<String> choices = new JComboBox<String>( );
+	JComboBox<String> choices = new JComboBox<String>();
 	JTextField low = new JTextField();
 	JTextField high = new JTextField();
 
 	public FilterPanel(String[] chooseFrom) {
-		 choices = new JComboBox<String>(chooseFrom);
+		init(chooseFrom);
+
+	}
+
+	public FilterPanel(ArrayList<String> chooseFrom) {
+		init(chooseFrom.toArray(new String[chooseFrom.size()]));
+
+	}
+
+	private void init(String[] chooseFrom) {
+		choices = new JComboBox<String>(chooseFrom);
 		// horizontal layout
 		this.setLayout(new GridLayout(1, 0));
 		add(include);
@@ -25,11 +36,12 @@ public class FilterPanel extends JPanel {
 		// add(op);
 		add(low);
 		add(high);
-
 	}
-public boolean shouldFilterBeApplied(){
-	return include.isSelected();
-}
+
+	public boolean shouldFilterBeApplied() {
+		return include.isSelected();
+	}
+
 	public int getId() {
 		return choices.getSelectedIndex();
 	}

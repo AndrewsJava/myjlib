@@ -1,13 +1,23 @@
 package harlequinmettle.utils.filetools.sqlite;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class SQLiteTools {
+	public static final int SQL_STRING_ADD = 1234;
+	public static final int SQL_FLOAT_ADD = 14141414;
+	public static final int SQL_BYTES_ADD = 7897979;
+
 	public static Connection establishSQLiteConnection(String dbName) {
 		Connection conn = null;
 		try {
@@ -26,7 +36,8 @@ public class SQLiteTools {
 		try {
 			Class.forName("org.sqlite.JDBC");
 
-			conn = DriverManager.getConnection("jdbc:sqlite:" + dbFile.getAbsolutePath());
+			conn = DriverManager.getConnection("jdbc:sqlite:"
+					+ dbFile.getAbsolutePath());
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -42,7 +53,7 @@ public class SQLiteTools {
 			stat.executeUpdate("drop table if exists " + tableName + ";");
 			String sqlStatement = "(";
 			for (int i = 0; i < tableColumns.length; i++) {
-				sqlStatement += "tr_"
+				sqlStatement += "db_"
 						+ tableColumns[i].replaceAll("[^A-Za-z0-9]", "_") + " "
 						+ tableColumnTypes[i] + ", ";
 			}
@@ -88,12 +99,26 @@ public class SQLiteTools {
 	}
 
 	public static PreparedStatement buildSQLStatement(PreparedStatement prep,
-			List values) {
-	 
+			List values,ArrayList<Integer> types) {
+ 
 		try {
-			for (int i = 0; i < values.size()-1; i++) {
-	 	if (values.size() >= i)
-					prep.setString(i+1  , "" + values.get(i));
+			for (int i = 0; i < values.size() ; i++) {
+				switch (types.get(i)) {
+				case SQL_STRING_ADD: 
+					prep.setString(i + 1, "" + values.get(i));
+					break;
+				case SQL_FLOAT_ADD: 
+					prep.setFloat(i + 1, (Float.parseFloat(values.get(i).toString()) ));
+					break;
+				case SQL_BYTES_ADD: 
+					byte[] bytes =  serialize(values.get(i));
+					//System.out.println(Arrays.toString(bytes));
+					prep.setBytes(i + 1,bytes);
+					break; 
+				default:
+					break;
+				}
+
 			}
 			prep.addBatch();
 
@@ -141,6 +166,31 @@ public class SQLiteTools {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static byte[] serialize(Object obj) {
+		byte[] bytes = null;
+		try {
+			ByteArrayOutputStream b = new ByteArrayOutputStream();
+			ObjectOutputStream o = new ObjectOutputStream(b);
+			o.writeObject(obj);
+			bytes = b.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return bytes;
+	}
+
+	public static Object deserialize(byte[] bytes) {
+		Object obj = null;
+		try {
+			ByteArrayInputStream b = new ByteArrayInputStream(bytes);
+			ObjectInputStream o = new ObjectInputStream(b);
+			obj = o.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return obj;
 	}
 
 }
