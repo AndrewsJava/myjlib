@@ -1,5 +1,6 @@
 package harlequinmettle.utils.guitools;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.util.ArrayList;
 
@@ -9,12 +10,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class FilterPanel extends JPanel {
-	JCheckBox include = new JCheckBox("apply filter");
+	protected JCheckBox include = new JCheckBox("apply filter");
 	String[] options = { "between", "less than", "greater than" };
 	JComboBox<String> op = new JComboBox<String>(options);
-	JComboBox<String> choices = new JComboBox<String>();
-	JTextField low = new JTextField();
-	JTextField high = new JTextField();
+	public JComboBox<String> choices = new JComboBox<String>();
+	public JTextField low = new JTextField();
+	public JTextField high = new JTextField();
 
 	public FilterPanel(String[] chooseFrom) {
 		init(chooseFrom);
@@ -22,13 +23,21 @@ public class FilterPanel extends JPanel {
 	}
 
 	public FilterPanel(ArrayList<String> chooseFrom) {
-		init(chooseFrom.toArray(new String[chooseFrom.size()])); 
+		init(chooseFrom.toArray(new String[chooseFrom.size()]));
 	}
-public String getFilterName(){
-	return choices.getSelectedItem().toString();
-	//return choices.getItemAt(choices.getSelectedIndex());
-					
-}
+
+	public String getFilterName() {
+		return choices.getSelectedItem().toString();
+		// return choices.getItemAt(choices.getSelectedIndex());
+
+	}
+
+	public void setFontSize(int fontSize) {
+		Font size = new Font("Bitstream", Font.PLAIN, fontSize);
+		low.setFont(size);
+		high.setFont(size);
+	}
+
 	private void init(String[] chooseFrom) {
 		choices = new JComboBox<String>(chooseFrom);
 		// horizontal layout

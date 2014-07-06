@@ -9,8 +9,7 @@ public class FileTools {
 	public static String tryToReadFileToString(File f, String defaultValue){
 		try{
 		 return FileUtils.readFileToString(f);
-		}catch(Exception e){
-			e.printStackTrace();
+		}catch(Exception e){ 
 		}
 		return defaultValue;
 	}

@@ -17,15 +17,18 @@ public class ChooseFilePrompterPathSaved {
 			new DisplayJFrame(key);
 			String savedPath = ChooseFilePrompter.filePathChooser();
 			savedsettings.settings.put(key, savedPath);
-			SerializationTool.serialize(savedsettings, pathToObject);
+			SerializationTool.serializeObject(savedsettings, pathToObject);
 			return savedPath;
 		}
 	}
-	public ChooseFilePrompterPathSaved(String pathToObject ) {
+	public ChooseFilePrompterPathSaved(String folderName,String pathToObject ) {
+		if(!new File(folderName).exists() )
+			new File(folderName).mkdir();
+		pathToObject = folderName+File.separator+pathToObject;
 		this.pathToObject = pathToObject;
 		File objectFile = new File(pathToObject);
 		if (objectFile.exists()) {
-			savedsettings = SerializationTool.deserialize(SavedSettings.class,
+			savedsettings = SerializationTool.deserializeObject(SavedSettings.class,
 					pathToObject); 
 		} else {
 			savedsettings = new SavedSettings();

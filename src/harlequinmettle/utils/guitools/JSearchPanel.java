@@ -2,6 +2,7 @@ package harlequinmettle.utils.guitools;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionListener;
 
 import javax.swing.JLabel;
@@ -16,28 +17,35 @@ public class JSearchPanel extends HorizontalJPanel {
 			"Search");
 
 	public JSearchPanel() {
-		setPreferredSize(new Dimension(300,75));
-//		int MAX_HT = 75;
-//		wordSearch.setMaximumSize(new Dimension(150,MAX_HT));
-//		wordsForSearch.setMaximumSize(new Dimension(150,MAX_HT));
-//		submitSearchButton.setMaximumSize(new Dimension(150,MAX_HT));
+		init();
+	}
+
+	public JSearchPanel(int f) {
+		wordsForSearch.setFont(new Font("Bitstream", Font.PLAIN, f));
+		init();
+	}
+
+	private void init() {
+
+		setPreferredSize(new Dimension(300, 75));
 		add(wordSearch);
 		add(wordsForSearch);
 		add(submitSearchButton);
 	}
 
-	public void addSearchAction(final ActionListener dosearch){
+	public void addSearchAction(final ActionListener dosearch) {
 		submitSearchButton.addActionListener(dosearch);
 		wordsForSearch.addActionListener(dosearch);
-	 
+
 	}
+
 	public String getSearchText() {
 		return wordsForSearch.getText();
 	}
 
 	public JTextField doJTextField() {
 		JTextField jta = new JTextField();
- 
+
 		jta.setBackground(new Color(165, 225, 210));
 		return jta;
 	}

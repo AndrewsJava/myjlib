@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.TreeMap;
 
@@ -16,7 +15,7 @@ public class NetPuller {
 	// public static long inputBytes = DatastoreAccess.getPreviousByteCount();
 	public static final String yahoobase = "http://finance.yahoo.com/q";
 	public static String longString = "123456789012345678901234567890123456789012345678901234567890-12345678901234567890-12345678901234567890";
-	public static final String ERROR_MESSAGE = "EXCEPTION";
+	 
 	//public static AtomicInteger fetchFails = new AtomicInteger(0);
 	public static final TreeMap<String, Integer> errorCount = new TreeMap<String, Integer>();
 
@@ -59,7 +58,7 @@ public class NetPuller {
 		//	if(!(e instanceof SocketTimeoutException))
 	 
 			// logError(e);
-			return ERROR_MESSAGE;
+			return null;
 		}
 		return str;
 	}
@@ -125,8 +124,8 @@ public class NetPuller {
 	public static String pastDividends(String ticker) {
 
 		String httpdata = getHtml2(yahoobase + "/hp?s=" + ticker + "&g=v");
-		if (httpdata.equals(ERROR_MESSAGE)) {
-			return ERROR_MESSAGE;
+		if (httpdata == null) {
+			return null;
 		} 
 
 		if ((!httpdata.contains("Adj Close"))
@@ -153,10 +152,10 @@ public class NetPuller {
 		try {
 			// http://finance.yahoo.com/q/pr?s=UCBA
 			httpdata = getHtml2(yahoobase + "/pr?s=" + ticker);
-			if (httpdata.equals(ERROR_MESSAGE)) {
-				companyDetails.put(ticker, ERROR_MESSAGE);
-				companyDescription.put(ticker, ERROR_MESSAGE);
-			} 
+//			if (httpdata.equals(ERROR_MESSAGE)) {
+//				companyDetails.put(ticker, ERROR_MESSAGE);
+//				companyDescription.put(ticker, ERROR_MESSAGE);
+//			} 
 			// System.out.println(httpdata);
 			if (!httpdata.contains(">Details<")) {
 				companyDetails.put(ticker, "<td>NO_DETAILS</td>");
@@ -194,9 +193,9 @@ public class NetPuller {
 		try {
 			// http://finance.yahoo.com/q?s=UCBA
 			httpdata = getHtml2(yahoobase + "?s=" + ticker);
-			if (httpdata.equals(ERROR_MESSAGE)) {
-				companySummary.put(ticker, ERROR_MESSAGE);
-			} 
+//			if (httpdata.equals(ERROR_MESSAGE)) {
+//				companySummary.put(ticker, ERROR_MESSAGE);
+//			} 
 			// System.out.println(httpdata);
 			if (!httpdata.contains("<div class=\"title\">")) {
 				companySummary.put(ticker, "<td>NO_DETAILS</td>");

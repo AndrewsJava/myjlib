@@ -1,7 +1,10 @@
 package harlequinmettle.utils.numbertools.math.statistics;
 
+import harlequinmettle.utils.numbertools.format.NumberTools;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -624,7 +627,20 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		if (showLines) {
 			drawRelativeLines(g);
 		}
+		addOverviewToDisplay(g);
 
+	}
+
+	final Font BIG_FONT = new Font("Bitstream", Font.PLAIN, 18);
+	private void addOverviewToDisplay(Graphics2D g) {
+g.setFont(BIG_FONT);
+g.setColor(Color.black);
+		String[] labels = { "sum: ", "sum of sq: ", "min: ", "max: ", "mean: ", "median: ", "standard deviation: ", };
+		double[] data = { sum, sumOfSquares, min, max, mean, median, standardDeviation };
+		for(int i = 0; i<labels.length; i++){
+			g.drawString(labels[i], 100, 50+22*i);
+			g.drawString(NumberTools.floatToBMKTrunkated((float)data[i],2), 320, 50+22*i);
+		}
 	}
 
 	private void drawRelativeLines(Graphics2D g) {
