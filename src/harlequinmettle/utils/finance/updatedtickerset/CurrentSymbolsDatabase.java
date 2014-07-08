@@ -77,6 +77,8 @@ public class CurrentSymbolsDatabase implements Serializable {
 		if (currentTickerSet.size() < 4000)
 			currentTickerSet = existingTickers;
 
+		 System.out.println("\n-----00))- total symbols: " +
+		 tickers.size() + "\n");
 		serializeAllData(source);
 		if (initialScan)
 			return;

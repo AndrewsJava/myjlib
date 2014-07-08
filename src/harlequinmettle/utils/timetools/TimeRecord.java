@@ -5,6 +5,20 @@ import java.util.Date;
 public class TimeRecord {
 
 
+	public static String fileTitleInt(String nasOrNy) {
+		double time = System.currentTimeMillis();
+		// convert to seconds
+		time /= 1000.0;
+		// convert to hours
+		time /= 3600.0;
+		// to days
+		time /= 24.0;
+		// limit to one decimal place 
+
+		return nasOrNy + "_" + (int)time + ".txt";
+		//
+	}
+
 	public static String fileTitle(String nasOrNy) {
 		double time = System.currentTimeMillis();
 		// convert to seconds
