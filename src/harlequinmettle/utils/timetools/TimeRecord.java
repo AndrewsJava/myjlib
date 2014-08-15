@@ -1,9 +1,11 @@
 package harlequinmettle.utils.timetools;
 
+import harlequinmettle.utils.stringtools.StringTools;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TimeRecord {
-
 
 	public static String fileTitleInt(String nasOrNy) {
 		double time = System.currentTimeMillis();
@@ -13,9 +15,9 @@ public class TimeRecord {
 		time /= 3600.0;
 		// to days
 		time /= 24.0;
-		// limit to one decimal place 
+		// limit to one decimal place
 
-		return nasOrNy + "_" + (int)time + ".txt";
+		return nasOrNy + "_" + (int) time + ".txt";
 		//
 	}
 
@@ -33,6 +35,7 @@ public class TimeRecord {
 		return nasOrNy + "_" + time + ".txt";
 		//
 	}
+
 	public static String fileTitleHtml(String nasOrNy) {
 		double time = System.currentTimeMillis();
 		// convert to seconds
@@ -72,7 +75,17 @@ public class TimeRecord {
 		//
 	}
 
-	
+	public static float dayNumber() {
+		long time = System.currentTimeMillis();
+		// convert to seconds
+		time /= 1000.0;
+		// convert to hours
+		time /= 3600.0;
+		// to days
+		time /= 24.0;
+		// limit to one decimal place
+		return (float) ((int) (time * 10) / 10.0);
+	}
 
 	public static float dayNumber(long time) {
 
@@ -84,7 +97,13 @@ public class TimeRecord {
 		time /= 24.0;
 		// limit to one decimal place
 		return (float) ((int) (time * 10) / 10.0);
+	}
 
+	public static float dayNumber(SimpleDateFormat dateFormat, String dateText, float defaultValue) {
+		Date d = StringTools.parseDate(dateFormat, dateText, null);
+		if (d == null)
+			return defaultValue;
+		return dayNumber(d.getTime());
 	}
 
 }

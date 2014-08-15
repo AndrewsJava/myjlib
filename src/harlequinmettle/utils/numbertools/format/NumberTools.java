@@ -1,7 +1,5 @@
 package harlequinmettle.utils.numbertools.format;
 
-import harlequinmettle.utils.numbertools.math.statistics.BasicCalculations;
-
 public class NumberTools {
 
 	public static String stringToBMKTrunkated(String parsableNumber, String defaultValue) {
@@ -13,7 +11,7 @@ public class NumberTools {
 
 	public static float tryToParse(String parsableNumber, float defaultValue) {
 		try {
-			return Float.parseFloat(parsableNumber);
+			return Float.parseFloat(parsableNumber.replaceAll(",", ""));
 		} catch (Exception e) {
 		}
 		return defaultValue;
@@ -60,8 +58,20 @@ public class NumberTools {
 	}
 
 	public static String formatCalculatePercentChange(float f, float g) {
-		float percent = BasicCalculations.calculatePercentChange(f, g);
+		float percent = calculatePercentChange(f, g);
 
 		return floatToBMKTrunkated(percent) + "%";
+	}
+
+	public static float calculatePercentChange(float start, float end) {
+		if (start != start || end != end)
+			return Float.NaN;
+		// if(Float.isInfinite(start))return
+		if (start == 0) {
+			if (end > 0)
+				return Float.POSITIVE_INFINITY;
+		}
+		return 100f * (end - start) / Math.abs(start);
+
 	}
 }

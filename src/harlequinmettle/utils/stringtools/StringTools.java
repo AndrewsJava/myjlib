@@ -1,8 +1,9 @@
 package harlequinmettle.utils.stringtools;
 
+import harlequinmettle.utils.timetools.TimeRecord;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 public class StringTools {
 
 	public static String clip(String htmlData, String start, String end) {
@@ -22,9 +23,17 @@ public class StringTools {
 		int startIndex = htmlData.indexOf(start);
 		if (startIndex < 0)
 			return "INVALID START";
-		return htmlData.substring(htmlData.indexOf(start));
+		return htmlData.substring( startIndex );
 	}
- 
+
+	public static float dayNumberOfLastReport(String interestingData) {
+		SimpleDateFormat typical = new SimpleDateFormat("MMM dd, yyyy");
+		if (interestingData.length() < 250)
+			return 0;
+		String date = interestingData.split("@@@")[1].trim();
+		Date lastReport = parseDate(typical, date);
+		return TimeRecord.dayNumber(lastReport.getTime());
+	}
 
 	private static Date parseDate(SimpleDateFormat typical, String date) {
 		Date d = new Date(0);
