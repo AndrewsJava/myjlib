@@ -5,9 +5,9 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 
 public class InstanceCounter {
-	private static final ArrayList<String> HIGH_COUNT_WORDS = new ArrayList<String>();
-	private static final TreeMap<String, Integer> STRING_COUNTER = new TreeMap<String, Integer>();
-	public static final TreeMap<Float, Integer> FLOAT_COUNTER = new TreeMap<Float, Integer>();
+	public final ArrayList<String> HIGH_COUNT_WORDS = new ArrayList<String>();
+	public final TreeMap<String, Integer> STRING_COUNTER = new TreeMap<String, Integer>();
+	public final TreeMap<Float, Integer> FLOAT_COUNTER = new TreeMap<Float, Integer>();
 
 	public void add(String s) {
 		if (STRING_COUNTER.containsKey(s)) {

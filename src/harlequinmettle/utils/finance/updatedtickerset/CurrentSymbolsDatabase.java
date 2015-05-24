@@ -45,8 +45,7 @@ public class CurrentSymbolsDatabase implements Serializable {
 		sectors = source.deserialize(sectors.getClass(), SECTORS_KEY);
 		industries = source.deserialize(industries.getClass(), INDUSTRIES_KEY);
 		tickerSymbolDatabase = source.deserialize(tickerSymbolDatabase.getClass(), TICKERS_DATABASE_KEY);
-		ensureNoneAreNull();
-		updateDatabase(source);
+		ensureNoneAreNull(source);
 	}
 
 	private void updateDatabase(SerializationMechanismInterface source) {
@@ -73,12 +72,11 @@ public class CurrentSymbolsDatabase implements Serializable {
 				tickerSymbolDatabase.put(read.tickerHashCode, read);
 			}
 
-		} 
+		}
 		if (currentTickerSet.size() < 4000)
 			currentTickerSet = existingTickers;
 
-		 System.out.println("\n-----00))- total symbols: " +
-		 tickers.size() + "\n");
+		System.out.println("\n-----00))- total symbols: " + tickers.size() + "\n");
 		serializeAllData(source);
 		if (initialScan)
 			return;
@@ -115,18 +113,19 @@ public class CurrentSymbolsDatabase implements Serializable {
 		source.serialize(tickerSymbolDatabase, TICKERS_DATABASE_KEY);
 	}
 
-	private void ensureNoneAreNull() {
+	private void ensureNoneAreNull(SerializationMechanismInterface source) {
 		if (tickers == null || (names == null) || (sectors == null) || (industries == null) || tickerSymbolDatabase == null)
-			reinitialize();
+			reinitialize(source);
 	}
 
-	private void reinitialize() {
+	private void reinitialize(SerializationMechanismInterface source) {
 		initialScan = true;
 		tickers = new TreeMap<Integer, String>();
 		names = new TreeMap<Integer, String>();
 		sectors = new TreeMap<Integer, String>();
 		industries = new TreeMap<Integer, String>();
 		tickerSymbolDatabase = new TreeMap<Integer, TickerSymbol>();
+		updateDatabase(source);
 
 	}
 

@@ -3,8 +3,34 @@ package harlequinmettle.utils.stringtools;
 import harlequinmettle.utils.timetools.TimeRecord;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class StringTools {
+
+	public static ArrayList<String> extractAllPattern(String htmlData, String regexPattern) {
+		ArrayList<String> patterns = new ArrayList<String>();
+		Pattern p = Pattern.compile(regexPattern);
+		Matcher m = p.matcher(htmlData);
+		while (m.find()) {
+			patterns.add(m.group());
+		}
+		return patterns;
+
+	}
+
+	public static String extractFirstPattern(String htmlData, String regexPattern) {
+
+		Pattern p = Pattern.compile(regexPattern);
+		Matcher m = p.matcher(htmlData);
+		while (m.find()) {
+			return m.group();
+		}
+		return "";
+
+	}
 
 	public static String clip(String htmlData, String start, String end) {
 		int startIndex = htmlData.indexOf(start);
@@ -23,7 +49,7 @@ public class StringTools {
 		int startIndex = htmlData.indexOf(start);
 		if (startIndex < 0)
 			return "INVALID START";
-		return htmlData.substring( startIndex );
+		return htmlData.substring(startIndex);
 	}
 
 	public static float dayNumberOfLastReport(String interestingData) {
@@ -43,7 +69,7 @@ public class StringTools {
 		try {
 			d = typical.parse(date);
 		} catch (Exception e) {
-	 
+
 		}
 		return d;
 	}
@@ -56,7 +82,7 @@ public class StringTools {
 		try {
 			d = typical.parse(date);
 		} catch (Exception e) {
-		 
+
 		}
 		return d;
 	}
@@ -72,6 +98,12 @@ public class StringTools {
 			return defaultValue;
 		htmlData = htmlData.substring(0, htmlData.indexOf(end));
 		return htmlData;
+	}
+
+	public static String removeJavascript(String htmlData) {
+
+		return htmlData.replaceAll("<script.*?/script>", " ");
+
 	}
 
 }

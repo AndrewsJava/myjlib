@@ -6,14 +6,14 @@ import java.awt.Color;
 import java.awt.Graphics;
 
 import javax.swing.JFrame;
-
+ 
 public class SystemMemoryUseDisplay extends JFrame implements Runnable {
 	int inc = 0;
 	String title = "Memory Use: ";
 	int mem = 0;
 	int slowdown = 0;
 
-	public SystemMemoryUseDisplay() {
+	public SystemMemoryUseDisplay() { 
 		this.setSize(300, 800);
 		this.setVisible(true);
 		this.setTitle(title);

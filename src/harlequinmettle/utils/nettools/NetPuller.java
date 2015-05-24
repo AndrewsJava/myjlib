@@ -1,16 +1,28 @@
 package harlequinmettle.utils.nettools;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
+import java.security.cert.X509Certificate;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 public class NetPuller {
 	// http://finance.yahoo.com/q/hp?s=ALCO
@@ -27,10 +39,10 @@ public class NetPuller {
 	/**
 	 * This method returns a String of http data f
 	 * 
-	 * @param suf
+	 * @param gsurl
 	 *            The http address to get string from.
 	 */
-	public static String getHtml2(String suf) {
+	public static String getHtml2(CharSequence gsurl) {
 		takeABreak(50);
 		URL url;
 		InputStream is;
@@ -39,7 +51,7 @@ public class NetPuller {
 
 		StringBuilder sb = new StringBuilder();
 		try {
-			url = new URL(suf);
+			url = new URL(gsurl.toString());
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
 			// conn.setInstanceFollowRedirects(true);
@@ -58,13 +70,128 @@ public class NetPuller {
 			}
 			r.close();
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 
 		String str = sb.toString();
 		str = str.replaceAll("\\s", " ");
 		while (str.contains("  "))
 			str = str.replaceAll("  ", " ");
+		return str;
+	}
+
+	/**
+	 * This method returns a String of http data f
+	 * 
+	 * @param gsurl
+	 *            The http address to get string from.
+	 */
+	public static String getHtmlWithUserAgent(CharSequence gsurl) {
+		takeABreak(50);
+		URL url;
+		InputStream is;
+		InputStreamReader isr;
+		BufferedReader r;
+		URLConnection uc;
+		StringBuilder sb = new StringBuilder();
+		try {
+			url = new URL(gsurl.toString());
+
+			uc = url.openConnection();
+			uc.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
+
+			uc.connect();
+
+			BufferedInputStream in = new BufferedInputStream(uc.getInputStream());
+			int ch;
+			while ((ch = in.read()) != -1) {
+				sb.append((char) ch);
+			}
+			in.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String str = sb.toString();
+		str = str.replaceAll("\\s", " ");
+		while (str.contains("  "))
+			str = str.replaceAll("  ", " ");
+		return str;
+	}
+
+	public static void saveImage(String imageUrl, File destinationFile) throws IOException {
+		URL url = new URL(imageUrl);
+		URLConnection uc = url.openConnection();
+
+		uc.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
+
+		InputStream is = uc.getInputStream();
+
+		OutputStream os = new FileOutputStream(destinationFile);
+
+		byte[] b = new byte[2048];
+		int length;
+
+		while ((length = is.read(b)) != -1) {
+			os.write(b, 0, length);
+		}
+
+		is.close();
+		os.close();
+	}
+
+	/**
+	 * This method returns a String of http data f
+	 * 
+	 * @param gsurl
+	 *            The http address to get string from.
+	 */
+	public static String getHtmlSSL(CharSequence gsurl) {
+		takeABreak(50);
+		StringBuilder sb = new StringBuilder();
+		try {
+			TrustManager[] trustAllCerts = new TrustManager[] { new X509TrustManager() {
+
+				// ///////////////////////////////
+				public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
+
+				public void checkClientTrusted(X509Certificate[] certs, String authType) {
+				}
+
+				public void checkServerTrusted(X509Certificate[] certs, String authType) {
+				}
+				// //////////////////////////////////
+			} };
+			// Install the all-trusting trust manager
+			final SSLContext sc = SSLContext.getInstance("SSL");
+			sc.init(null, trustAllCerts, new java.security.SecureRandom());
+			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+			// Create all-trusting host name verifier
+			HostnameVerifier allHostsValid = new HostnameVerifier() {
+				public boolean verify(String hostname, SSLSession session) {
+					return true;
+				}
+			};
+
+			// Install the all-trusting host verifier
+			HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);
+
+			URL url = new URL(gsurl.toString());
+			URLConnection con = url.openConnection();
+			final Reader reader = new InputStreamReader(con.getInputStream());
+			final BufferedReader br = new BufferedReader(reader);
+			String line = "";
+			while ((line = br.readLine()) != null) {
+				sb.append(line + " ");
+			}
+			br.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String str = sb.toString();
+		str = str.replaceAll("\\s", " ");
 		return str;
 	}
 
