@@ -1,10 +1,8 @@
-package harlequinmettle.utils.numbertools.format;
-
-import harlequinmettle.investorengine.util.NumberTool;
+package harlequinmettle.investmentadviserengine.util;
 
 import java.math.BigDecimal;
 
-public class NumberTools {
+public class NumberTool {
 	public static double roundToSignificantFigures(double num, int n) {
 		if (num == 0) {
 			return 0;

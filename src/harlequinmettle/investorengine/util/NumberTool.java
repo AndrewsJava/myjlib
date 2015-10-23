@@ -1,10 +1,8 @@
-package harlequinmettle.utils.numbertools.format;
-
-import harlequinmettle.investorengine.util.NumberTool;
+package harlequinmettle.investorengine.util;
 
 import java.math.BigDecimal;
 
-public class NumberTools {
+public class NumberTool {
 	public static double roundToSignificantFigures(double num, int n) {
 		if (num == 0) {
 			return 0;
@@ -26,34 +24,6 @@ public class NumberTools {
 		final double magnitude = Math.pow(10, power);
 		final long shifted = Math.round(num * magnitude);
 		return shifted / magnitude;
-	}
-
-	public static double roundToSignificantFigures2Optimized(double num, double defaultValue, double minMagnitude) {
-
-		final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
-		final int power = 2 - (int) d;
-
-		final double magnitude = Math.pow(10, power);
-		final long shifted = Math.round(num * magnitude);
-
-		double returnValue = shifted / magnitude;
-		if (returnValue == returnValue && Math.abs(returnValue) > minMagnitude)
-			return returnValue;
-		return defaultValue;
-	}
-
-	public static double roundToOneSignificantFigureOptimized(double num, double defaultValue, double minMagnitude) {
-
-		final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
-		final int power = 1 - (int) d;
-
-		final double magnitude = Math.pow(10, power);
-		final long shifted = Math.round(num * magnitude);
-
-		double returnValue = shifted / magnitude;
-		if (returnValue == returnValue && Math.abs(returnValue) > minMagnitude)
-			return returnValue;
-		return defaultValue;
 	}
 
 	/**
@@ -84,8 +54,7 @@ public class NumberTools {
 
 	public static float tryToParseFloat(String parsableNumber, float defaultValue) {
 		try {
-
-			return Float.parseFloat(parsableNumber.replaceAll(",", "").trim());
+			return Float.parseFloat(parsableNumber.replaceAll(",", ""));
 		} catch (Exception e) {
 		}
 		return defaultValue;
@@ -118,24 +87,6 @@ public class NumberTools {
 			return ((int) (10 * number)) / 10f + suffix;
 		else
 			return (int) number + suffix;
-	}
-
-	public static float stringNumberWithMBKtoFloat(String numberString) {
-
-		float factor = 1;
-		if (numberString.contains("B")) {
-			factor *= 1e9f;
-		}
-		if (numberString.contains("M")) {
-			factor *= 1e6f;
-
-		}
-		if (numberString.contains("K")) {
-			factor *= 1e3f;
-		}
-		numberString = numberString.replaceAll("[^\\.0-9-]", "");
-		return factor * NumberTool.tryToParseFloat(numberString, Float.NaN);
-
 	}
 
 	public static String floatToBMKTrunkated(float number, int sigfigs) {
@@ -174,15 +125,4 @@ public class NumberTools {
 		return 100f * (end - start) / Math.abs(start);
 
 	}
-
-	public static long tryToParseLong(String parsableNumber, long defaultValue) {
-		// Apr 21, 2015 9:27:24 AM
-		try {
-			return Long.parseLong(parsableNumber.replaceAll(",", ""));
-		} catch (Exception e) {
-		}
-		return defaultValue;
-
-	}
-
 }

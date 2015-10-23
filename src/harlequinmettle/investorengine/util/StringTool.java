@@ -1,36 +1,9 @@
-package harlequinmettle.utils.stringtools;
-
-import harlequinmettle.utils.timetools.TimeRecord;
+package harlequinmettle.investorengine.util;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class StringTools {
-
-	public static ArrayList<String> extractAllPattern(String htmlData, String regexPattern) {
-		ArrayList<String> patterns = new ArrayList<String>();
-		Pattern p = Pattern.compile(regexPattern);
-		Matcher m = p.matcher(htmlData);
-		while (m.find()) {
-			patterns.add(m.group());
-		}
-		return patterns;
-
-	}
-
-	public static String extractFirstPattern(String htmlData, String regexPattern) {
-
-		Pattern p = Pattern.compile(regexPattern);
-		Matcher m = p.matcher(htmlData);
-		while (m.find()) {
-			return m.group();
-		}
-		return "";
-
-	}
+public class StringTool {
 
 	public static String clip(String htmlData, String start, String end) {
 		int startIndex = htmlData.indexOf(start);
@@ -49,7 +22,7 @@ public class StringTools {
 		int startIndex = htmlData.indexOf(start);
 		if (startIndex < 0)
 			return "INVALID START";
-		return htmlData.substring(startIndex);
+		return htmlData.substring(htmlData.indexOf(start));
 	}
 
 	public static float dayNumberOfLastReport(String interestingData) {
@@ -69,7 +42,6 @@ public class StringTools {
 		try {
 			d = typical.parse(date);
 		} catch (Exception e) {
-
 		}
 		return d;
 	}
@@ -82,7 +54,23 @@ public class StringTools {
 		try {
 			d = typical.parse(date);
 		} catch (Exception e) {
+		}
+		return d;
+	}
 
+	static int exceptionCounter = 0;
+
+	public static Date parseDate(SimpleDateFormat typical, String date, Date defaultDate, boolean logCountExceptions) {
+		Date d = defaultDate;
+		// for reports with no numbers; avoids exception reporting
+		if (date.equals("Total Revenue"))
+			return d;
+		try {
+			d = typical.parse(date);
+		} catch (Exception e) {
+			if (logCountExceptions) {
+				exceptionCounter++;
+			}
 		}
 		return d;
 	}
@@ -100,28 +88,10 @@ public class StringTools {
 		return htmlData;
 	}
 
-	public static String removeJavascript(String htmlData) {
-
-		return htmlData.replaceAll("<script.*?/script>", " ");
-
+	public static String limitLength(String string, int maxLength) {
+		if (string.length() > maxLength)
+			return string.substring(0, maxLength);
+		return string;
 	}
 
-	public static String replaceAllRegex(String text, String regex, String replacement) {
-		StringBuffer sb = new StringBuffer();
-		Pattern p = Pattern.compile(regex);
-		Matcher m = p.matcher(text);
-		return m.replaceAll(replacement);
-		// while (m.find()) {
-		// m.appendReplacement(sb, replacement);
-		// }
-		// m.appendTail(sb);
-		// return (sb.toString());
-	}
-
-	// Aug 24, 2015 10:46:36 AM
-	public static String[] getLines(String fileContents) {
-		if (fileContents == null)
-			return null;
-		return fileContents.split("\n");
-	}
 }

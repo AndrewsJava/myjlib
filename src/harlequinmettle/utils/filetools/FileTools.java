@@ -1,8 +1,13 @@
 package harlequinmettle.utils.filetools;
 
+import harlequinmettle.utils.stringtools.StringTools;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.TreeMap;
 
 import javax.imageio.ImageIO;
@@ -52,6 +57,29 @@ public class FileTools {
 		}
 
 		return null;
+
+	}
+
+	public static Collection<String> tryToReadFileToCollection(File file) {
+		Collection<String> contents = new ArrayList<String>();
+		String fileContents = tryToReadFileToString(file, null);
+		if (fileContents == null)
+			return contents;
+		String[] lines = StringTools.getLines(fileContents);
+		contents.addAll(Arrays.asList(lines));
+		return contents;
+	}
+
+	// Aug 24, 2015 10:55:31 AM
+	public static void tryToWriteCollectionToFileLines(File file, Collection<String> collection) {
+		if (collection == null || collection.isEmpty())
+			return;
+		String fileContents = "";
+		for (String line : collection) {
+			fileContents += line + "\n";
+
+		}
+		tryToWriteStringToFile(file, fileContents.trim());
 
 	}
 }
