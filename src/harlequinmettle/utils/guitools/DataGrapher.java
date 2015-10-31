@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.swing.JPanel;
 
@@ -25,6 +26,7 @@ public class DataGrapher extends JPanel {
 	volatile private TreeMap<String, ArrayList<Point2D.Float>> titledDataSets = new TreeMap<String, ArrayList<Point2D.Float>>();
 	volatile private TreeMap<String, ArrayList<Point2D.Float>> scaledDataPoints = new TreeMap<String, ArrayList<Point2D.Float>>();
 
+	public final ConcurrentSkipListMap<String, Boolean> drawLines = new ConcurrentSkipListMap<String, Boolean>();
 	private double width;
 	private double height;
 	private double minX = Double.POSITIVE_INFINITY;
@@ -51,6 +53,8 @@ public class DataGrapher extends JPanel {
 		int colorCode = index.hashCode();
 		if (!colors.containsKey(index))
 			colors.put(index, new Color((int) (Integer.MAX_VALUE * Math.random()) >> 8));
+		if (!drawLines.containsKey(index))
+			drawLines.put(index, true);
 	}
 
 	// private Color getRandomColor(int colorCode) {
@@ -164,12 +168,12 @@ public class DataGrapher extends JPanel {
 	// Oct 22, 2015 8:13:36 AM
 	private void setDimensions() {
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		width = screenSize.getWidth() * 0.9;
-		height = screenSize.getHeight() * 0.9;
+		width = screenSize.getWidth();
+		height = screenSize.getHeight();
 		if (getParent() != null) {
 			screenSize = getParent().getSize();
-			width = screenSize.getWidth() * 0.9;
-			height = screenSize.getHeight() * 0.9;
+			width = screenSize.getWidth();
+			height = screenSize.getHeight();
 		}
 		try {
 			errorLine.rescaleErrorLine();
@@ -204,7 +208,9 @@ public class DataGrapher extends JPanel {
 			if (pointsArray.isEmpty())
 				continue;
 			String index = ent.getKey();
-
+			Boolean lineDrawOption = drawLines.get(index);
+			if (lineDrawOption != null && !lineDrawOption)
+				continue;
 			GeneralPath line = new GeneralPath();
 			Point2D.Float firstPoint = pointsArray.get(0);
 			boolean first = true;
