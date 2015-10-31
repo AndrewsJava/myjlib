@@ -18,7 +18,8 @@ import javax.swing.JPanel;
 
 public class DataGrapher extends JPanel {
 
-	private static final int POINT_SIZE = 10;
+	private static final int POINT_SIZE = 5;
+	private static final int SMALL_POINT_SIZE = 2;
 	// private TreeMap<Integer, ArrayList<Float>> dataSets = new
 	// TreeMap<Integer, ArrayList<Float>>();
 	volatile private TreeMap<String, ArrayList<Point2D.Float>> titledDataSets = new TreeMap<String, ArrayList<Point2D.Float>>();
@@ -30,46 +31,26 @@ public class DataGrapher extends JPanel {
 	private double maxX = Double.NEGATIVE_INFINITY;
 	private double minY = Double.POSITIVE_INFINITY;
 	private double maxY = Double.NEGATIVE_INFINITY;
+
 	private TreeMap<String, Color> colors = new TreeMap<String, Color>();
-	ErrorLine errorLine = new ErrorLine();
 
-	class ErrorLine {
-		private ArrayList<Float> errorPoints = new ArrayList<Float>();
-		GeneralPath errorGraph = new GeneralPath();
+	public ErrorLine errorLine = new ErrorLine();
 
-		public void addErrorPoint(float error) {
-			errorPoints.add(error);
-		}
-
-		// Oct 23, 2015 12:09:16 PM
-		private void rescaleErrorLine() {
-			int x = 10;
-			int y = 20;
-			errorGraph.moveTo(x, y);
-			if (errorPoints.isEmpty())
-				return;
-			float initialError = errorPoints.get(0);
-			float errorGraphScalingFactor = (float) (height / initialError);
-			float interval = 5;
-			for (float error : errorPoints) {
-				x += interval;
-				y = (int) (height + 10 - error * errorGraphScalingFactor);
-				errorGraph.lineTo(x, y);
-			}
-		}
+	public void addErrorPoint(float error) {
+		errorLine.addErrorPoint(error);
 	}
 
 	public void addData(int index, ArrayList<Float> x, ArrayList<Float> y) {
 		addData("" + index, x, y);
 	}
 
-	public void addData(String index, ArrayList<Float> x, ArrayList<Float> y) {
-		ArrayList<Point2D.Float> dataset = pairData(x, y);
-		ArrayList<Point2D.Float> scaleSet = scalePoints(dataset);
+	public void addData(String index, ArrayList<Float> xs, ArrayList<Float> ys) {
+		ArrayList<Point2D.Float> dataset = pairData(xs, ys);
 		titledDataSets.put("" + index, dataset);
-		scaledDataPoints.put("" + index, scaleSet);
+		rescaleAllLines();
 		int colorCode = index.hashCode();
-		colors.put(index, new Color(colorCode));
+		if (!colors.containsKey(index))
+			colors.put(index, new Color((int) (Integer.MAX_VALUE * Math.random()) >> 8));
 	}
 
 	// private Color getRandomColor(int colorCode) {
@@ -78,22 +59,33 @@ public class DataGrapher extends JPanel {
 	// return null;
 	// }
 
+	private void rescaleAllLines() {
+		// Oct 30, 2015 9:20:17 AM
+		for (Entry<String, ArrayList<Point2D.Float>> ent : titledDataSets.entrySet()) {
+			ArrayList<Point2D.Float> scaleSet = scalePoints(ent.getValue());
+			scaledDataPoints.put("" + ent.getKey(), scaleSet);
+		}
+	}
+
 	// Oct 22, 2015 9:05:16 AM
 	private ArrayList<Point2D.Float> scalePoints(ArrayList<Point2D.Float> dataset) {
 
+		System.out.println();
 		ArrayList<Point2D.Float> scaleSet = new ArrayList<Point2D.Float>();
 		if (dataset.isEmpty())
 			return scaleSet;
-		float horizontalInterval = (int) (width / dataset.size());
+		float horizontalRange = (float) (maxX - minX);
+		float horizontalFactor = (float) (0.7 * width / horizontalRange);
+
 		float vertRange = (float) (maxY - minY);
-		float verticalFactor = (float) -(height / vertRange);
-		float horizontalPoint = (float) (0.02f * width);
+		float verticalFactor = (float) -(0.9 * height / vertRange);
+
 		for (Point2D.Float originalData : dataset) {
 			Point2D.Float scaledPoint = new Point2D.Float();
-			scaledPoint.x = horizontalPoint;
-			scaledPoint.y = (float) (0.04 * height + verticalFactor * (minY + originalData.y));
+			scaledPoint.x = (float) (0.15 * width + horizontalFactor * (originalData.x - minX));
+
+			scaledPoint.y = (float) (0.15 * height + verticalFactor * (minY + originalData.y));
 			scaleSet.add(scaledPoint);
-			horizontalPoint += horizontalInterval;
 		}
 		return scaleSet;
 	}
@@ -123,6 +115,8 @@ public class DataGrapher extends JPanel {
 
 	private boolean setMinMaxY(ArrayList<Float> dataset) {
 		// Oct 21, 2015 12:48:42 PM
+		if (dataset.isEmpty())
+			return false;
 		double maxY = Collections.max(dataset);
 		boolean minMaxChange = false;
 		if (maxY > this.maxY) {
@@ -139,6 +133,8 @@ public class DataGrapher extends JPanel {
 
 	private boolean setMinMaxX(ArrayList<Float> dataset) {
 		// Oct 21, 2015 12:48:42 PM
+		if (dataset.isEmpty())
+			return false;
 		double maxX = Collections.max(dataset);
 		boolean minMaxChange = false;
 		if (maxX > this.maxX) {
@@ -154,11 +150,8 @@ public class DataGrapher extends JPanel {
 	}
 
 	public DataGrapher() {
-		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		width = screenSize.getWidth() - 50;
-		height = screenSize.getHeight() - 50;
-		errorLine.rescaleErrorLine();
-		// setDimensions();
+
+		setDimensions();
 	}
 
 	@Override
@@ -170,10 +163,19 @@ public class DataGrapher extends JPanel {
 
 	// Oct 22, 2015 8:13:36 AM
 	private void setDimensions() {
-		Dimension screenSize = getSize();
-		width = screenSize.getWidth() * 0.95;
-		height = screenSize.getHeight() * 0.95;
-		errorLine.rescaleErrorLine();
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		width = screenSize.getWidth() * 0.9;
+		height = screenSize.getHeight() * 0.9;
+		if (getParent() != null) {
+			screenSize = getParent().getSize();
+			width = screenSize.getWidth() * 0.9;
+			height = screenSize.getHeight() * 0.9;
+		}
+		try {
+			errorLine.rescaleErrorLine();
+		} catch (Exception e) {
+			// e.printStackTrace();
+		}
 	}
 
 	// Oct 21, 2015 12:12:29 PM
@@ -181,6 +183,8 @@ public class DataGrapher extends JPanel {
 	public void paintComponent(Graphics g1) {
 		super.paintComponent(g1);
 		// setBackground(new Color(128, 40, 228));
+		if (width == 0 || height == 0)
+			return;
 		BufferedImage canvas = new BufferedImage((int) width, (int) height, BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2d = canvas.createGraphics();
 		drawData(g2d);
@@ -191,18 +195,25 @@ public class DataGrapher extends JPanel {
 
 	private void drawData(Graphics2D g2d) {
 		// Oct 21, 2015 12:42:44 PM
+		g2d.setBackground(Color.black);
+		if (scaledDataPoints.isEmpty())
+			return;
 		int colorchooser = 0;
 		for (Entry<String, ArrayList<Point2D.Float>> ent : scaledDataPoints.entrySet()) {
 			ArrayList<Point2D.Float> pointsArray = ent.getValue();
+			if (pointsArray.isEmpty())
+				continue;
+			String index = ent.getKey();
+
 			GeneralPath line = new GeneralPath();
 			Point2D.Float firstPoint = pointsArray.get(0);
 			boolean first = true;
 			line.moveTo(firstPoint.x, firstPoint.y);
-			if (colorchooser++ == 0)
-				g2d.setColor(Color.white);
-			else
-				g2d.setColor(Color.blue);
-			// g2d.setColor(colors.get(ent.getKey()));
+			// if (colorchooser++ == 0)
+			// g2d.setColor(Color.white);
+			// else
+			// g2d.setColor(Color.blue);
+			g2d.setColor(colors.get(ent.getKey()));
 			for (Point2D.Float points : pointsArray) {
 				if (first) {
 					first = false;
@@ -211,12 +222,19 @@ public class DataGrapher extends JPanel {
 				float scaledX = points.x;
 				float scaledY = points.y;
 				line.lineTo(scaledX, scaledY);
-				g2d.fillOval((int) scaledX - POINT_SIZE / 2, (int) scaledY - POINT_SIZE / 2, POINT_SIZE, POINT_SIZE);
+				if (index.contains("target"))
+					continue;
+				if (index.contains("testing"))
+					g2d.fillOval((int) scaledX - SMALL_POINT_SIZE / 2, (int) scaledY - SMALL_POINT_SIZE / 2, SMALL_POINT_SIZE, SMALL_POINT_SIZE);
+				else
+					g2d.fillRect((int) scaledX - POINT_SIZE / 2, (int) scaledY - POINT_SIZE / 2, POINT_SIZE, POINT_SIZE);
 			}
-			g2d.draw(line);
+			colorchooser++;
+			if (!index.contains("testing"))
+				g2d.draw(line);
 		}
 
 		g2d.setColor(Color.green);
-		// g2d.draw(errorGraph);
+		g2d.draw(errorLine.errorGraph);
 	}
 }
