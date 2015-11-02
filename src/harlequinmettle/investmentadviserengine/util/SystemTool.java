@@ -78,7 +78,7 @@ public class SystemTool {
 			checkElapsedTime(startTime);
 			Thread.sleep(milliseconds);
 		} catch (Exception e) {
-			ErrorLog.log(e);
+			// ErrorLog.log(e);
 		}
 	}
 

@@ -3,6 +3,7 @@ package harlequinmettle.utils.guitools;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -27,6 +28,8 @@ public class DataGrapher extends JPanel {
 	volatile private TreeMap<String, ArrayList<Point2D.Float>> scaledDataPoints = new TreeMap<String, ArrayList<Point2D.Float>>();
 
 	public final ConcurrentSkipListMap<String, Boolean> drawLines = new ConcurrentSkipListMap<String, Boolean>();
+	public final ConcurrentSkipListMap<String, String> displayText = new ConcurrentSkipListMap<String, String>();
+	Font displayFont = new Font("Arail", Font.PLAIN, 24);
 	private double width;
 	private double height;
 	private double minX = Double.POSITIVE_INFINITY;
@@ -34,9 +37,14 @@ public class DataGrapher extends JPanel {
 	private double minY = Double.POSITIVE_INFINITY;
 	private double maxY = Double.NEGATIVE_INFINITY;
 
-	private TreeMap<String, Color> colors = new TreeMap<String, Color>();
+	public TreeMap<String, Color> colors = new TreeMap<String, Color>();
 
 	public ErrorLine errorLine = new ErrorLine();
+
+	public void addDisplayText(String key, String value) {
+
+		displayText.put(key, value);
+	}
 
 	public void addErrorPoint(float error) {
 		errorLine.addErrorPoint(error);
@@ -74,21 +82,20 @@ public class DataGrapher extends JPanel {
 	// Oct 22, 2015 9:05:16 AM
 	private ArrayList<Point2D.Float> scalePoints(ArrayList<Point2D.Float> dataset) {
 
-		System.out.println();
 		ArrayList<Point2D.Float> scaleSet = new ArrayList<Point2D.Float>();
 		if (dataset.isEmpty())
 			return scaleSet;
 		float horizontalRange = (float) (maxX - minX);
-		float horizontalFactor = (float) (0.7 * width / horizontalRange);
+		float horizontalFactor = (float) (0.6 * width / horizontalRange);
 
 		float vertRange = (float) (maxY - minY);
-		float verticalFactor = (float) -(0.9 * height / vertRange);
+		float verticalFactor = (float) -(0.8 * height / vertRange);
 
 		for (Point2D.Float originalData : dataset) {
 			Point2D.Float scaledPoint = new Point2D.Float();
-			scaledPoint.x = (float) (0.15 * width + horizontalFactor * (originalData.x - minX));
+			scaledPoint.x = (float) (0.1 * width + horizontalFactor * (originalData.x - minX));
 
-			scaledPoint.y = (float) (0.15 * height + verticalFactor * (minY + originalData.y));
+			scaledPoint.y = (float) (0.1 * height + verticalFactor * (minY + originalData.y));
 			scaleSet.add(scaledPoint);
 		}
 		return scaleSet;
@@ -239,8 +246,19 @@ public class DataGrapher extends JPanel {
 			if (!index.contains("testing"))
 				g2d.draw(line);
 		}
-
 		g2d.setColor(Color.green);
-		g2d.draw(errorLine.errorGraph);
+		g2d.setFont(displayFont);
+		float x = (float) (width * 0.02f);
+		float x2 = (float) x + (100);
+		float y = (float) (height * 0.1f);
+
+		for (Entry<String, String> ent : displayText.entrySet()) {
+			g2d.drawString(ent.getKey(), x, y);
+			g2d.drawString(ent.getValue(), x2, y);
+			y += displayFont.getSize2D() + 10;
+		}
+		if (drawLines.containsKey("error") && drawLines.get("error")) {
+			g2d.draw(errorLine.errorGraph);
+		}
 	}
 }
