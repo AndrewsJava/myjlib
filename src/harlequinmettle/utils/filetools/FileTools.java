@@ -71,12 +71,12 @@ public class FileTools {
 	}
 
 	// Aug 24, 2015 10:55:31 AM
-	public static void tryToWriteCollectionToFileLines(File file, Collection<String> collection) {
+	public static void tryToWriteCollectionToFileLines(File file, Collection collection) {
 		if (collection == null || collection.isEmpty())
 			return;
 		String fileContents = "";
-		for (String line : collection) {
-			fileContents += line + "\n";
+		for (Object line : collection) {
+			fileContents += line.toString() + "\n";
 
 		}
 		tryToWriteStringToFile(file, fileContents.trim());

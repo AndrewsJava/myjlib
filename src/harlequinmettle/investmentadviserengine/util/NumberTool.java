@@ -68,9 +68,16 @@ public class NumberTool {
 	}
 
 	public static float round2(float d) {
-		BigDecimal bd = new BigDecimal(Float.toString(d));
-		bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
-		return bd.floatValue();
+		try {
+			BigDecimal bd = new BigDecimal(Float.toString(d));
+			bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
+			return bd.floatValue();
+		} catch (Exception e) {
+			System.out.println("in " + d);
+			System.out.println("as string (unreadable by BigDecimal)" + Float.toString(d));
+			e.printStackTrace();
+		}
+		return Float.NaN;
 	}
 
 	public static String stringToBMKTrunkated(String parsableNumber, String defaultValue) {
