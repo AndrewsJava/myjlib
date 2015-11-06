@@ -95,7 +95,7 @@ public class DataGrapher extends JPanel {
 			Point2D.Float scaledPoint = new Point2D.Float();
 			scaledPoint.x = (float) (0.1 * width + horizontalFactor * (originalData.x - minX));
 
-			scaledPoint.y = (float) (0.1 * height + verticalFactor * (minY + originalData.y));
+			scaledPoint.y = (float) (0.05 * height + verticalFactor * (minY + originalData.y));
 			scaleSet.add(scaledPoint);
 		}
 		return scaleSet;

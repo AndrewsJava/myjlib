@@ -31,8 +31,7 @@ import java.util.TreeSet;
 
 import javax.swing.JFrame;
 
-public class StatInfo extends JFrame implements WindowListener, MouseListener,
-		MouseMotionListener {
+public class StatInfo extends JFrame implements WindowListener, MouseListener, MouseMotionListener {
 	// public int ID;
 	public int repaintCounter = 0;
 	public static final int SIDE_BUFFER = 50;
@@ -69,10 +68,8 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 	private static final Color line2C = new Color(60, 120, 20);
 	private static final Color limLine = new Color(90, 60, 60);
 	private static final Color gridLineColor = new Color(60, 100, 60);
-	private static final BasicStroke thick = new BasicStroke(2f,
-			BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-	private static final BasicStroke thicker = new BasicStroke(4f,
-			BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	private static final BasicStroke thick = new BasicStroke(2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+	private static final BasicStroke thicker = new BasicStroke(4f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
 	private static final int BAR_BUFFER = 2;
 
@@ -136,16 +133,11 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 	 */
 	@Override
 	public String toString() {
-		return "TITLE: " + title + "\nsum: " + sum + "\nsum of sq: "
-				+ sumOfSquares + "\nmin: " + min + "\nmax: " + max + "\nmean: "
-				+ mean + "\nmedian: " + median + "\nstandard deviation: "
-				+ standardDeviation + "\nhistogram: "
-				+ Arrays.toString(histogram) + "\ninterval: " + interval
-				+ "\ngraphicsScale: " + graphicsScale + "\nframeH: " + frameH
-				+ "\nframeW: " + frameW + "\nmaxBar: " + maxBar
-				+ "\nbarwidth: " + barwidth + "\nhistobars: "
-				+ Arrays.toString(histoBars) + "\ndataquality: " + dataQuality
-				+ "\nnullCt: " + nullCt
+		return "TITLE: " + title + "\nsum: " + sum + "\nsum of sq: " + sumOfSquares + "\nmin: " + min + "\nmax: " + max + "\nmean: " + mean
+				+ "\nmedian: " + median + "\nstandard deviation: " + standardDeviation + "\nhistogram: " + Arrays.toString(histogram)
+				+ "\ninterval: " + interval + "\ngraphicsScale: " + graphicsScale + "\nframeH: " + frameH + "\nframeW: " + frameW + "\nmaxBar: "
+				+ maxBar + "\nbarwidth: " + barwidth + "\nhistobars: " + Arrays.toString(histoBars) + "\ndataquality: " + dataQuality + "\nnullCt: "
+				+ nullCt
 
 		;
 	}
@@ -171,8 +163,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 
 				frameW = evt.getComponent().getWidth();
 				frameH = evt.getComponent().getHeight();
-				barwidth = (frameW - 2 * SIDE_BUFFER - BAR_BUFFER * nbars)
-						/ nbars;
+				barwidth = (frameW - 2 * SIDE_BUFFER - BAR_BUFFER * nbars) / nbars;
 				if (varsSet)
 					setUpBars();
 				setMarketPathToScale();
@@ -221,17 +212,15 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		if (medianFinder.size() < 1)
 			return;
 		Collections.sort(medianFinder);
-		if(medianFinder.size()==1)
+		if (medianFinder.size() == 1)
 			median = sum;
 		else
-		median = ((medianFinder.get((int) (n / 2)) + medianFinder
-				.get((int) ((n - 1) / 2))) / 2);
+			median = ((medianFinder.get((int) (n / 2)) + medianFinder.get((int) ((n - 1) / 2))) / 2);
 		min = medianFinder.get(0);
 		max = medianFinder.get(medianFinder.size() - 1);
 		// mode = findMode(medianFinder);
 
-		standardDeviation = (float) Math.sqrt((sumOfSquares - sum * sum / n)
-				/ n);
+		standardDeviation = (float) Math.sqrt((sumOfSquares - sum * sum / n) / n);
 		range = max - min;
 
 		dataQuality = (float) n / data.size();
@@ -240,16 +229,16 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		double highThird = (mean + percentile * standardDeviation);
 		emax = highThird > max ? max : highThird;
 		// round our numbers to 4 sig fig
-		BigDecimal bd  = new BigDecimal(0);
-		if(!Double.isInfinite(emin)){
-		  bd = new BigDecimal(emin);
-		bd = bd.round(new MathContext(4));
-		emin = bd.floatValue();
+		BigDecimal bd = new BigDecimal(0);
+		if (!Double.isInfinite(emin)) {
+			bd = new BigDecimal(emin);
+			bd = bd.round(new MathContext(4));
+			emin = bd.floatValue();
 		}
-		if(!Double.isInfinite(emax)){
-		bd = new BigDecimal(emax);
-		bd = bd.round(new MathContext(4));
-		emax = bd.floatValue();
+		if (!Double.isInfinite(emax)) {
+			bd = new BigDecimal(emax);
+			bd = bd.round(new MathContext(4));
+			emax = bd.floatValue();
 		}
 	}
 
@@ -292,8 +281,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 		this.histogram = histogram;
 	}
 
-	public int[] calculateHistogramEffective(ArrayList<Float> _data,
-			float overrideMin, float overrideMax) {
+	public int[] calculateHistogramEffective(ArrayList<Float> _data, float overrideMin, float overrideMax) {
 		// ///////////////////////////////////
 
 		range = overrideMax - overrideMin;
@@ -387,8 +375,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 			int left = SIDE_BUFFER + BAR_BUFFER * i + ((int) barwidth) * i;
 			int width = (int) (barwidth);
 			int height = (int) (toScale * absDiff + 2);
-			Rectangle2D.Double diff = new Rectangle2D.Double(left, top, width,
-					height);
+			Rectangle2D.Double diff = new Rectangle2D.Double(left, top, width, height);
 
 			if (over > under) {
 				// green bar
@@ -406,8 +393,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 	}
 
 	private void setMarketPathToScale() {
-		graphInterval = (frameW - 2 * SIDE_BUFFER)
-				/ (marketComparison.size() - 1);
+		graphInterval = (frameW - 2 * SIDE_BUFFER) / (marketComparison.size() - 1);
 		gridLines.clear();
 		float minimumPt = findMinimum(marketComparison.values());
 		float maximumPt = findMaximum(marketComparison.values());
@@ -454,8 +440,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 	public void addPercentagesGraph(TreeMap<Float, Float> newData) {
 		percentChanges.remove(newData);
 
-		System.out.println("adding graph to view -->" + title + "   >"
-				+ newData.values());
+		System.out.println("adding graph to view -->" + title + "   >" + newData.values());
 		percentChanges.add(newData);
 		recalculatePercentagesScale();
 		repaint();
@@ -492,8 +477,7 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 				float key = entr.getKey();
 				float xpt = SIDE_BUFFER + graphInterval * i;
 
-				float ypt = frameH
-						- (SIDE_BUFFER + localScale * (f - minimumPt));
+				float ypt = frameH - (SIDE_BUFFER + localScale * (f - minimumPt));
 				if (index == 0) {
 					// save market changes points
 					marketPoints.add(ypt);
@@ -511,13 +495,11 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 				}
 
 				if (index > 0 && bSizes.size() > 0) {
-					displaySizes.put(new Point2D.Float(xpt, ypt),
-							bSizes.get(index - 1).get(key));
+					displaySizes.put(new Point2D.Float(xpt, ypt), bSizes.get(index - 1).get(key));
 				}
 
 				if (index > 0 && bSizesChanges.size() > 0) {
-					displaySetChanges.put(new Point2D.Float(xpt, ypt),
-							bSizesChanges.get(index - 1).get(key));
+					displaySetChanges.put(new Point2D.Float(xpt, ypt), bSizesChanges.get(index - 1).get(key));
 				}
 
 				if (i == 0)
@@ -632,14 +614,15 @@ public class StatInfo extends JFrame implements WindowListener, MouseListener,
 	}
 
 	final Font BIG_FONT = new Font("Bitstream", Font.PLAIN, 18);
+
 	private void addOverviewToDisplay(Graphics2D g) {
-g.setFont(BIG_FONT);
-g.setColor(Color.black);
+		g.setFont(BIG_FONT);
+		g.setColor(Color.black);
 		String[] labels = { "sum: ", "sum of sq: ", "min: ", "max: ", "mean: ", "median: ", "standard deviation: ", };
 		double[] data = { sum, sumOfSquares, min, max, mean, median, standardDeviation };
-		for(int i = 0; i<labels.length; i++){
-			g.drawString(labels[i], 100, 50+22*i);
-			g.drawString(NumberTools.floatToBMKTrunkated((float)data[i],2), 320, 50+22*i);
+		for (int i = 0; i < labels.length; i++) {
+			g.drawString(labels[i], 100, 50 + 22 * i);
+			g.drawString(NumberTools.floatToBMKTrunkated((float) data[i], 2), 320, 50 + 22 * i);
 		}
 	}
 
@@ -680,17 +663,14 @@ g.setColor(Color.black);
 		g.drawString(" " + emax, frameW - 100, frameH - 30);
 		if (false)
 			for (Entry<Point2D.Float, Integer> entr : displaySizes.entrySet()) {
-				g.drawString("" + entr.getValue(), entr.getKey().x,
-						entr.getKey().y);
+				g.drawString("" + entr.getValue(), entr.getKey().x, entr.getKey().y);
 			}
 
 		for (Entry<Point2D.Float, Point> entr : displaySetChanges.entrySet()) {
 			g.setColor(Color.green);
-			g.drawString("+" + entr.getValue().x, entr.getKey().x,
-					entr.getKey().y - 18);
+			g.drawString("+" + entr.getValue().x, entr.getKey().x, entr.getKey().y - 18);
 			g.setColor(Color.red);
-			g.drawString("-" + entr.getValue().y, entr.getKey().x,
-					entr.getKey().y);
+			g.drawString("-" + entr.getValue().y, entr.getKey().x, entr.getKey().y);
 		}
 	}
 
