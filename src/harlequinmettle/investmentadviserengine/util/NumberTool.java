@@ -16,6 +16,19 @@ public class NumberTool {
 		return shifted / magnitude;
 	}
 
+	public static double roundToSignificantFigures3(double num, double defaultValue) {
+
+		final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
+		final int power = 3 - (int) d;
+
+		final double magnitude = Math.pow(10, power);
+		final long shifted = Math.round(num * magnitude);
+		double result = shifted / magnitude;
+		if (result == result)
+			return result;
+		return defaultValue;
+	}
+
 	public static double roundToSignificantFigures2(double num) {
 
 		final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
