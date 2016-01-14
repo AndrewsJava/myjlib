@@ -1,6 +1,6 @@
 package harlequinmettle.utils.filetools;
 
-import harlequinmettle.utils.stringtools.StringTools;
+import harlequinmettle.utils.stringtools.StringTool;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -65,7 +65,7 @@ public class FileTools {
 		String fileContents = tryToReadFileToString(file, null);
 		if (fileContents == null)
 			return contents;
-		String[] lines = StringTools.getLines(fileContents);
+		String[] lines = StringTool.getLines(fileContents);
 		contents.addAll(Arrays.asList(lines));
 		return contents;
 	}

@@ -1,6 +1,6 @@
 package harlequinmettle.utils.timetools;
 
-import harlequinmettle.utils.stringtools.StringTools;
+import harlequinmettle.utils.stringtools.StringTool;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -100,7 +100,7 @@ public class TimeRecord {
 	}
 
 	public static float dayNumber(SimpleDateFormat dateFormat, String dateText, float defaultValue) {
-		Date d = StringTools.parseDate(dateFormat, dateText, null);
+		Date d = StringTool.parseDate(dateFormat, dateText, null);
 		if (d == null)
 			return defaultValue;
 		return dayNumber(d.getTime());

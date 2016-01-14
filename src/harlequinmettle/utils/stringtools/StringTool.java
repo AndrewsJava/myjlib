@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class StringTools {
+public class StringTool {
 
 	public static ArrayList<String> extractAllPattern(String htmlData, String regexPattern) {
 		ArrayList<String> patterns = new ArrayList<String>();
